@@ -1,5 +1,6 @@
 import enum
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,16 +25,17 @@ class Config:
 
     # Database vars
     PONY = {
-        'provider': 'mysql',
-        'host': os.environ["DB_HOST"],
-        'user': os.environ["DB_USER"],
+        "provider": "mysql",
+        "host": os.environ["DB_HOST"],
+        "user": os.environ["DB_USER"],
         "passwd": os.environ["DB_PASSWORD"],
-        "db": os.environ["DB_NAME"]
+        "db": os.environ["DB_NAME"],
     }
 
 
 class ProductionConfig(Config):
     pass
+
 
 class DevelopmentConfig(Config):
     # App vars
@@ -42,6 +44,3 @@ class DevelopmentConfig(Config):
     DEBUG = True
     LOG_LEVEL = LogLevel.DEBUG
     ENVIRONMENT = "development"
-    
-
-
