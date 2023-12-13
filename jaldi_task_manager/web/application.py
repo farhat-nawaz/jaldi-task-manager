@@ -8,25 +8,23 @@ load_dotenv()
 
 
 def create_app() -> Flask:
-    app = Flask(__name__)
+    app = Flask("jaldi_task_manager")
 
     env = os.environ["ENVIRONMENT"].capitalize()
     app.config.from_object(f"jaldi_task_manager.config.{env}Config")
 
     from jaldi_task_manager.db import db
     from jaldi_task_manager.db.models.task import Task
-    from jaldi_task_manager.web.api.task.views import TaskAPI
+    from jaldi_task_manager.web.api.task.views import TaskAPI, TaskDetailAPI
 
     db.bind(**app.config["PONY"])
     db.generate_mapping(create_tables=True)
     Pony(app)
 
-    tasks_api = TaskAPI.as_view("tasks", Task)
-    app.add_url_rule("/api/tasks/<string:id>", view_func=tasks_api)
+    task_api = TaskAPI.as_view("task", Task)
+    task_detail_api = TaskDetailAPI.as_view("task_detail", Task)
 
-    # from yourapplication.views.admin import admin
-    # from yourapplication.views.frontend import frontend
-    # app.register_blueprint(admin)
-    # app.register_blueprint(frontend)
+    app.add_url_rule("/api/tasks", view_func=task_api)
+    app.add_url_rule("/api/tasks/<string:id>", view_func=task_detail_api)
 
     return app
