@@ -1,0 +1,6 @@
+# Directories
+.venv/
+.vscode/
+
+# Files
+poetry.lock
