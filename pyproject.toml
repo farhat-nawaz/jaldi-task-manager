@@ -9,6 +9,10 @@ readme = "README.md"
 python = "^3.11"
 flask = "3.0.0"
 pony = "^0.7.17"
+gunicorn = "^21.2.0"
+python-dotenv = "^1.0.0"
+pymysql = "^1.1.0"
+cryptography = "^41.0.7"
 
 [tool.isort]
 profile = "black"

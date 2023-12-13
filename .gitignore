@@ -1,6 +1,7 @@
 # Directories
 .venv/
 .vscode/
+__pycache__
 
 # Files
 poetry.lock
