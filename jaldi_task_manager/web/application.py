@@ -11,8 +11,11 @@ load_dotenv()
 def create_app() -> Flask:
     app = Flask("jaldi_task_manager")
 
-    env = os.environ["ENVIRONMENT"].capitalize()
-    app.config.from_object(f"jaldi_task_manager.config.{env}Config")
+    env = os.environ["ENVIRONMENT"]
+    if env not in ("production", "development"):
+        env = "production"
+
+    app.config.from_object(f"jaldi_task_manager.config.{env.capitalize()}Config")
 
     # JWT setup
     jwt = JWTManager(app)  # noqa: F841
