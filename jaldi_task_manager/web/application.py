@@ -13,17 +13,24 @@ def create_app() -> Flask:
     env = os.environ["ENVIRONMENT"].capitalize()
     app.config.from_object(f"jaldi_task_manager.config.{env}Config")
 
+    import jaldi_task_manager.web.api.auth.views as auth_views
+    import jaldi_task_manager.web.api.task.views as task_views
     from jaldi_task_manager.db import db
-    from jaldi_task_manager.web.api.task.views import TaskAPI, TaskDetailAPI
 
+    # DB initialization
     db.bind(**app.config["PONY"])
     db.generate_mapping(create_tables=True)
     Pony(app)
 
-    app.add_url_rule("/api/tasks", view_func=TaskAPI.as_view("task"))
+    # Add URLs for views
+    app.add_url_rule("/api/tasks", view_func=task_views.TaskAPI.as_view("task"))
     app.add_url_rule(
         "/api/tasks/<uuid:id>",
-        view_func=TaskDetailAPI.as_view("task_detail"),
+        view_func=task_views.TaskDetailAPI.as_view("task_detail"),
+    )
+    app.add_url_rule(
+        "/api/signup",
+        view_func=auth_views.SignUpAPI.as_view("signup"),
     )
 
     return app
