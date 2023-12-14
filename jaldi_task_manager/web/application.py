@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask
+from flask_jwt_extended import JWTManager
 from pony.flask import Pony
 
 load_dotenv()
@@ -12,6 +13,9 @@ def create_app() -> Flask:
 
     env = os.environ["ENVIRONMENT"].capitalize()
     app.config.from_object(f"jaldi_task_manager.config.{env}Config")
+
+    # JWT setup
+    jwt = JWTManager(app)  # noqa: F841
 
     import jaldi_task_manager.web.api.auth.views as auth_views
     import jaldi_task_manager.web.api.task.views as task_views
@@ -31,6 +35,10 @@ def create_app() -> Flask:
     app.add_url_rule(
         "/api/signup",
         view_func=auth_views.SignUpAPI.as_view("signup"),
+    )
+    app.add_url_rule(
+        "/api/signin",
+        view_func=auth_views.SignInAPI.as_view("signin"),
     )
 
     return app

@@ -2,6 +2,7 @@ from uuid import UUID
 
 from flask import Response
 from flask.views import MethodView
+from flask_jwt_extended import jwt_required
 from flask_pydantic import validate
 from jaldi_task_manager.db.models.task import Task
 from jaldi_task_manager.web.api.task.schema import (
@@ -18,12 +19,14 @@ class TaskAPI(MethodView):
     def __init__(self) -> None:
         self.model = Task
 
+    @jwt_required()
     def get(self) -> Response:
         tasks = [t.into_pydantic(TaskOut) for t in self.model.select()]
 
         return HTTPResponse.ok(tasks)
 
     @validate()
+    @jwt_required()
     def post(self, body: TaskCreateParams) -> Response:
         task: Task = self.model(**body.model_dump())
         task.flush()
@@ -41,6 +44,7 @@ class TaskDetailAPI(MethodView):
         return self.model.get(id=id) or APIError.ENTITY_NOT_FOUND
 
     @validate()
+    @jwt_required()
     def get(self, id: UUID) -> Response:
         task = self._get(id)
 
@@ -50,6 +54,7 @@ class TaskDetailAPI(MethodView):
         return HTTPResponse.ok(task.into_pydantic(TaskOut))
 
     @validate()
+    @jwt_required()
     def put(self, id: UUID, body: TaskUpdateParams) -> Response:
         task = self._get(id)
 
@@ -60,6 +65,7 @@ class TaskDetailAPI(MethodView):
         return HTTPResponse.ok(task.into_pydantic(TaskOut))
 
     @validate()
+    @jwt_required()
     def delete(self, id: UUID) -> Response:
         task = self._get(id)
 

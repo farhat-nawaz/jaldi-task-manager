@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 class APIError(enum.Enum):
     BAD_REQUEST = (400, "BAD REQUEST")
+    INVALID_REQUEST_DATA = (400, "INVALID DATA FOR REQUEST")
     ENTITY_NOT_FOUND = (204, "ENTITY NOT FOUND")
     SERVICE_ERROR = (500, "SERVICE ERROR")
 

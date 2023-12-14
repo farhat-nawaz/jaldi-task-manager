@@ -22,6 +22,7 @@ class Config:
     DEBUG = False
     LOG_LEVEL = LogLevel.INFO
     ENVIRONMENT = "production"
+    JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 
     # Database vars
     PONY = {

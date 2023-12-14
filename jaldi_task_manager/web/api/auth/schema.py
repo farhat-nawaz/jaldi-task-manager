@@ -7,6 +7,15 @@ class SignUpParams(BaseModel):
     password: str
 
 
+class SignInParams(BaseModel):
+    username: str
+    password: str
+
+
+class JWTResponse(BaseModel):
+    access_token: str
+
+
 class UserOut(BaseModel):
     username: str
     name: str
