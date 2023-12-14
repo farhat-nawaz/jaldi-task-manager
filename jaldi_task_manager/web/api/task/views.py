@@ -27,11 +27,11 @@ class TaskAPI(MethodView):
 
     @validate()
     @jwt_required()
-    def post(self, body: TaskCreateParams) -> Response:
+    def post(self, body: TaskCreateParams) -> tuple[Response, int]:
         task: Task = self.model(**body.model_dump())
         task.flush()
 
-        return HTTPResponse.ok(task.into_pydantic(TaskOut), 201)
+        return HTTPResponse.ok(task.into_pydantic(TaskOut), 201), 201
 
 
 class TaskDetailAPI(MethodView):

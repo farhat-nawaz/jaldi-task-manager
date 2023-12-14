@@ -15,11 +15,11 @@ class SignUpAPI(MethodView):
         self.model = User
 
     @validate()
-    def post(self, body: auth_schema.SignUpParams) -> Response:
+    def post(self, body: auth_schema.SignUpParams) -> tuple[Response, int]:
         user: User = self.model.get(username=body.username)
 
         if user:
-            return HTTPResponse.err(APIError.BAD_REQUEST)
+            return HTTPResponse.err(APIError.BAD_REQUEST), 400
 
         new_user = User(
             username=body.username,
@@ -32,7 +32,7 @@ class SignUpAPI(MethodView):
         )
         new_user.flush()
 
-        return HTTPResponse.ok(new_user.into_pydantic(auth_schema.UserOut), 201)
+        return HTTPResponse.ok(new_user.into_pydantic(auth_schema.UserOut), 201), 201
 
 
 class SignInAPI(MethodView):

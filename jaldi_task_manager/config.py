@@ -45,3 +45,8 @@ class DevelopmentConfig(Config):
     DEBUG = True
     LOG_LEVEL = LogLevel.DEBUG
     ENVIRONMENT = "development"
+
+
+class TestingConfig(Config):
+    TESTING = True
+    PONY = {"provider": "sqlite", "filename": ":memory:"}

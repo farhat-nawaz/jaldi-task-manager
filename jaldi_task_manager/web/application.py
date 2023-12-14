@@ -1,5 +1,3 @@
-import os
-
 from dotenv import load_dotenv
 from flask import Flask
 from flask_jwt_extended import JWTManager
@@ -8,11 +6,10 @@ from pony.flask import Pony
 load_dotenv()
 
 
-def create_app() -> Flask:
+def create_app(env: str = "production") -> Flask:
     app = Flask("jaldi_task_manager")
 
-    env = os.environ["ENVIRONMENT"]
-    if env not in ("production", "development"):
+    if env not in ("production", "development", "testing"):
         env = "production"
 
     app.config.from_object(f"jaldi_task_manager.config.{env.capitalize()}Config")
