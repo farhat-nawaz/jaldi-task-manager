@@ -25,13 +25,20 @@ class Config:
     JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 
     # Database vars
-    PONY = {
-        "provider": "mysql",
-        "host": os.environ["DB_HOST"],
-        "user": os.environ["DB_USER"],
-        "passwd": os.environ["DB_PASSWORD"],
-        "db": os.environ["DB_NAME"],
-    }
+    if os.getenv("USE_SQLITE", "False").lower() == "true":
+        PONY = {
+            "provider": "sqlite",
+            "filename": f"{os.getcwd()}/jaldi_task_manager/db/database.sqlite",
+            "create_db": True,
+        }
+    else:
+        PONY = {
+            "provider": "mysql",
+            "host": os.environ["DB_HOST"],
+            "user": os.environ["DB_USER"],
+            "passwd": os.environ["DB_PASSWORD"],
+            "db": os.environ["DB_NAME"],
+        }
 
 
 class ProductionConfig(Config):

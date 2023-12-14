@@ -4,6 +4,7 @@ from flask import Response
 from flask.views import MethodView
 from flask_jwt_extended import jwt_required
 from flask_pydantic import validate
+
 from jaldi_task_manager.db.models.task import Task
 from jaldi_task_manager.web.api.task.schema import (
     TaskCreateParams,
@@ -20,18 +21,21 @@ class TaskAPI(MethodView):
         self.model = Task
 
     @jwt_required()
-    def get(self) -> Response:
-        tasks = [t.into_pydantic(TaskOut) for t in self.model.select()]
+    def get(self) -> tuple[Response, int]:
+        tasks = [TaskOut.model_validate(t) for t in self.model.select()]
 
-        return HTTPResponse.ok(tasks)
+        if len(tasks) == 0:
+            return HTTPResponse.err(APIError.ENTITY_NOT_FOUND), 204
+
+        return HTTPResponse.ok(tasks), 200
 
     @validate()
     @jwt_required()
     def post(self, body: TaskCreateParams) -> tuple[Response, int]:
-        task: Task = self.model(**body.model_dump())
+        task = self.model(**body.model_dump())
         task.flush()
 
-        return HTTPResponse.ok(task.into_pydantic(TaskOut), 201), 201
+        return HTTPResponse.ok(TaskOut.model_validate(task), 201), 201
 
 
 class TaskDetailAPI(MethodView):
@@ -45,13 +49,13 @@ class TaskDetailAPI(MethodView):
 
     @validate()
     @jwt_required()
-    def get(self, id: UUID) -> Response:
+    def get(self, id: UUID) -> tuple[Response, int]:
         task = self._get(id)
 
         if isinstance(task, APIError):
-            return HTTPResponse.err(task)
+            return HTTPResponse.err(task), 204
 
-        return HTTPResponse.ok(task.into_pydantic(TaskOut))
+        return HTTPResponse.ok(TaskOut.model_validate(task)), 200
 
     @validate()
     @jwt_required()
@@ -62,7 +66,7 @@ class TaskDetailAPI(MethodView):
             return HTTPResponse.err(task)
 
         task.set(**body.model_dump())
-        return HTTPResponse.ok(task.into_pydantic(TaskOut))
+        return HTTPResponse.ok(TaskOut.model_validate(task))
 
     @validate()
     @jwt_required()
@@ -73,4 +77,4 @@ class TaskDetailAPI(MethodView):
             return HTTPResponse.err(task)
 
         task.delete()
-        return HTTPResponse.ok(task.into_pydantic(TaskOut))
+        return HTTPResponse.ok(TaskOut.model_validate(task))

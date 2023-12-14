@@ -26,14 +26,8 @@ def test_new_task_payload_validation(client: FlaskClient, json_header, data, exp
         assert param["loc"][0] in expected[1]
 
 
-def test_new_task(client: FlaskClient, json_header, new_task, login_payload):
-    token = client.post(
-        "/api/signin",
-        headers=json_header,
-        json=login_payload,
-    ).get_json()["data"]["access_token"]
-
-    json_header["Authorization"] = f"Bearer {token}"
+def test_new_task(client: FlaskClient, json_header, new_task, access_token):
+    json_header["Authorization"] = f"Bearer {access_token()}"
     res = client.post("/api/tasks", headers=json_header, json=new_task)
 
     assert res.status_code == 201
@@ -54,14 +48,8 @@ def test_new_task(client: FlaskClient, json_header, new_task, login_payload):
     assert res["data"]["description"] == new_task["description"]
 
 
-def test_delete_task(client: FlaskClient, json_header, new_task, login_payload):
-    token = client.post(
-        "/api/signin",
-        headers=json_header,
-        json=login_payload,
-    ).get_json()["data"]["access_token"]
-
-    json_header["Authorization"] = f"Bearer {token}"
+def test_delete_task(client: FlaskClient, json_header, new_task, access_token):
+    json_header["Authorization"] = f"Bearer {access_token()}"
 
     task_id = client.post("/api/tasks", headers=json_header, json=new_task).get_json()[
         "data"
@@ -87,14 +75,8 @@ def test_delete_task(client: FlaskClient, json_header, new_task, login_payload):
     assert res["data"]["description"] == new_task["description"]
 
 
-def test_put_task(client: FlaskClient, json_header, new_task, login_payload):
-    token = client.post(
-        "/api/signin",
-        headers=json_header,
-        json=login_payload,
-    ).get_json()["data"]["access_token"]
-
-    json_header["Authorization"] = f"Bearer {token}"
+def test_put_task(client: FlaskClient, json_header, new_task, access_token):
+    json_header["Authorization"] = f"Bearer {access_token()}"
 
     task_id = client.post("/api/tasks", headers=json_header, json=new_task).get_json()[
         "data"

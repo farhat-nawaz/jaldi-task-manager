@@ -1,7 +1,10 @@
 # Directories
+.mypy_cache/
+.pytest_cache
 .venv/
 .vscode/
 __pycache__
 
 # Files
+.env
 poetry.lock

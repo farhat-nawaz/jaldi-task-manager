@@ -1,5 +1,5 @@
 import enum
-from typing import Type
+from typing import TypeVar
 
 from flask import Response, jsonify
 from pydantic import BaseModel
@@ -7,22 +7,19 @@ from pydantic import BaseModel
 
 class APIError(enum.Enum):
     BAD_REQUEST = (400, "BAD REQUEST")
+    INVALID_USERNAME = (400, "INVALID USERNAME")
+    INVALID_PASSWORD = (400, "INVALID PASSWORD")
     INVALID_REQUEST_DATA = (400, "INVALID DATA FOR REQUEST")
     ENTITY_NOT_FOUND = (204, "ENTITY NOT FOUND")
     SERVICE_ERROR = (500, "SERVICE ERROR")
 
 
-class PydanticModel:
-    def into_pydantic(self, model: Type[BaseModel]) -> Type[BaseModel]:
-        return model.model_validate(self)  # type: ignore
+T = TypeVar("T", bound=BaseModel)
 
 
 class HTTPResponse:
     @staticmethod
-    def ok(
-        data: Type[BaseModel] | list[Type[BaseModel]],
-        status_code: int = 200,
-    ) -> Response:
+    def ok(data: T | list[T], status_code: int = 200) -> Response:
         if isinstance(data, list):
             data = [d.model_dump() for d in data]  # type: ignore
         else:

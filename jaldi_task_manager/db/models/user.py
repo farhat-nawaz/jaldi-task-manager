@@ -1,15 +1,15 @@
 import datetime
 
-from jaldi_task_manager.db import db
-from jaldi_task_manager.web.utils import PydanticModel
 from pony import orm
+
+from jaldi_task_manager.db import db
 
 
 def _current_timestamp() -> float:
     return datetime.datetime.utcnow().timestamp()
 
 
-class User(db.Entity, PydanticModel):
+class User(db.Entity):
     _table_: str = "users"
 
     username = orm.PrimaryKey(str, max_len=20)

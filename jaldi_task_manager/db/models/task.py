@@ -1,16 +1,16 @@
 import datetime
 import uuid
 
-from jaldi_task_manager.db import db
-from jaldi_task_manager.web.utils import PydanticModel
 from pony import orm
+
+from jaldi_task_manager.db import db
 
 
 def _current_timestamp() -> float:
     return datetime.datetime.utcnow().timestamp()
 
 
-class Task(db.Entity, PydanticModel):
+class Task(db.Entity):
     _table_: str = "tasks"
 
     id = orm.PrimaryKey(uuid.UUID, default=uuid.uuid4)
