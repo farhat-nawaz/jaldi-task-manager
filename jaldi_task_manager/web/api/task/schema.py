@@ -20,6 +20,7 @@ class TaskOut(BaseModel):
     id: UUID
     name: str
     description: str
+    created_by: str
     created_ts: float
     modified_ts: float
 

@@ -56,7 +56,5 @@ class SignInAPI(MethodView):
         elif check_password_hash(str(user.password_hash), body.password) is False:
             return HTTPResponse.err(APIError.INVALID_PASSWORD)
 
-        resp = {}
-        resp["access_token"] = create_access_token(identity=body.username)
-
+        resp = dict(access_token=create_access_token(identity=body.username))
         return HTTPResponse.ok(JWTResponse.model_validate(resp))
